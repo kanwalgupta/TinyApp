@@ -12,8 +12,8 @@
     <ul>
 
     <% for (url in urls) { %>
-         <form method="POST" action="/urls/<%= url %>/delete">
-           <li><%= url %> - <%= urls[url]%> <input type="submit" value="Delete"> </li>
+         <form method="POST" >
+           <li><%= url %> - <%= urls[url]%> <input formaction="/urls/<%= url %>" type="submit" value="Edit"><input formaction="/urls/<%= url %>/delete" type="submit" value="Delete"> </li>
          </form>
     <% } %>
 

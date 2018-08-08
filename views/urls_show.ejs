@@ -10,7 +10,12 @@
 
     <!-- Add your EJS code here -->
   <ul>
+      <form method="POST" action="/urls/<%= shortURL %>/" >
         <li><%= shortURL%> - <%= longURL%></li>
+        <br>
+        <input type="text" name="newLongURL" value= <%= longURL %>>
+        <input type="submit" value="Update"> </li>
+      </form>
   </ul>
 </body>
 </html>
