@@ -1,4 +1,12 @@
 <meta charset="UTF-8">
 <title>Tiny URL Header</title>
-<a href='/login'>Existing User Login</a><br>
-<a href='/register'>New User Register</a><br>
+<% if(!user){ %>
+
+  <a href='/login'>Existing User Login</a><br>
+  <a href='/register'>New User Register</a><br>
+<% }else{ %>
+ <form action="/logout" method="POST">
+ User: <%= user["email"]%> has been logged in.
+ <input type="submit" value="Logout">
+ </form>
+<%  } %>

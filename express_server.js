@@ -41,11 +41,16 @@ app.get("/urls", (req, res) => {
     let templateVars = { urls: urlDatabase ,  user: users[req.cookies["user_id"]] };
     res.render("urls_index", templateVars);
   }else{
-    res.render('/login');
+    res.render('urls_login');
   }
 });
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  if(req.cookies["user_id"]){
+    let templateVars = { user : users[req.cookies["user_id"]] };
+    res.render("urls_new",templateVars);
+  }else{
+    res.render('urls_login');
+  }
 });
 app.get("/register", (req, res) => {
   res.render("urls_registration");
