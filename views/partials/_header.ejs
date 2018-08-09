@@ -1,14 +1,4 @@
 <meta charset="UTF-8">
 <title>Tiny URL Header</title>
-<% if(username === undefined) { %>
-<form action="/login" method="POST">
-  Login:<br>
-  UserName<input type="text" name="username" ><br>
-  <input type="submit" value="Submit">
-</form>
-<% } else { %>
- <form action="/logout" method="POST">
- User: <%= username %> has been logged in.
- <input type="submit" value="Logout">
- </form>
-<% } %>
+<a href='/login'>Existing User Login</a><br>
+<a href='/register'>New User Register</a><br>
