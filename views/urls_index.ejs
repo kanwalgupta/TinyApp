@@ -11,11 +11,12 @@
 
     <ul>
 
-    <% for (url in urls) { %>
+    <% for (url in urlData) { %>
          <form method="POST" >
-           <li><%= url %> - <%= urls[url]%> <input formaction="/urls/<%= url %>" type="submit" value="Edit"><input formaction="/urls/<%= url %>/delete" type="submit" value="Delete"> </li>
+           <li><%= urlData[url].shortURL %> - <%= urlData[url].longURL%> <input formaction="/urls/<%= urlData[url].shortURL  %>" type="submit" value="Edit"><input formaction="/urls/<%= urlData[url].shortURL%>/delete" type="submit" value="Delete"> </li>
          </form>
     <% } %>
+    <a href = "/urls/new"> Create new short URL </a>
 
 </ul>
 </body>

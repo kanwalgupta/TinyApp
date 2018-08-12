@@ -1,14 +1,10 @@
 var express = require("express");
 var app = express();
-//var cookieParser = require('cookie-parser');
-//app.use(cookieParser());
 const bcrypt = require('bcrypt');
 var cookieSession = require('cookie-session');
 app.use(cookieSession({
   name: 'session',
   keys: ['rames','susma','motto'],
-
-  // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 var PORT = 8080; // default port 8080
@@ -38,7 +34,7 @@ const users = {
 }
 
 app.get("/", (req, res) => {
-  res.end("Hello!");
+  res.redirect("/urls");
 });
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -47,28 +43,18 @@ app.get("/hello", (req, res) => {
   res.end("<html><body>Hello <b>World</b></body></html>\n");
 });
 app.get("/urls", (req, res) => {
-  let templateVars ={ urls : "" , user : ""};
-  let userFound = false;
+
+  let urlDatabaseforUser = [];
   if(req.session.user_id){
    Object.keys(urlDatabase).forEach(key => {
-     console.log("inside loop");
-
-     if(urlDatabase[key].userID === req.session.user_id){
-       console.log("userFound");
-       userFound = true;
-       templateVars  = { urls: urlDatabase[key] ,  user: users[req.session.user_id] };
-       return;
+    if(urlDatabase[key].userID === req.session.user_id){
+       urlDatabaseforUser.push(urlDatabase[key]);
      }
-
-  });
-    if(userFound){
-      res.render("urls_index", templateVars);
+    });
+       let templateVars ={ urlData : urlDatabaseforUser , user : users[req.session.user_id]};
+       res.render("urls_index", templateVars);
     }else{
-      templateVars = { urls: " " ,  user: users[req.session.user_id] };
-      res.render("urls_new",templateVars);
-    }
-  }else{
-    res.render('urls_login');
+    res.redirect('/login');
   }
 });
 app.get("/urls/new", (req, res) => {
@@ -83,10 +69,7 @@ app.get("/register", (req, res) => {
   res.render("urls_registration");
 });
 app.get("/u/:shortURL", (req, res) => {
-  // let longURL = ...
-
   let longURL = urlDatabase[req.params.shortURL].longURL;
-
   res.redirect(longURL);
 });
 app.get("/urls/:id", (req, res) => {
@@ -95,22 +78,20 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  // let longURL = ...
-  res.render("urls_login");
-
-
+  if(req.session.user_id){
+    res.redirect("/urls");
+  }else{
+    res.render("urls_login");
+   }
 });
 app.post("/urls", (req, res) => {
   let shortId = generateRandomString();
   let url = { shortURL : "" , longURL : "" , userID : ""};
-
-
   url.shortURL=shortId;
   url.longURL = req.body.longURL;
   url.userID = req.session.user_id;
   urlDatabase[shortId] = url;
-
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  res.redirect('/urls');
 });
 
 app.post("/urls/:id", (req, res) => {
@@ -123,12 +104,11 @@ app.post("/urls/:id", (req, res) => {
 });
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
-  console.log(urlDatabase);
   res.redirect('/urls');
 
 });
 app.post("/login", (req, res) => {
-  if(isValidUser(req.body.email , req.body.password,res)){
+  if(isValidUser(req.body.email , req.body.password,req)){
     res.redirect('/urls');
   }else{
     res.sendStatus(403);
@@ -136,7 +116,7 @@ app.post("/login", (req, res) => {
 
 });
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect('/urls');
 
 });
@@ -145,24 +125,16 @@ app.post("/register", (req, res) => {
   if(req.body.email === "" || req.body.password === "" || isExistingUser(req.body.email)){
     res.sendStatus(400);
   }else{
-
-
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
     users[userId] = {
       id: userId ,
       email: req.body.email,
       password: hashedPassword
     }
-    //res.cookie('user_id',userId);
-    //res.session.user_id = userId;
     req.session.user_id = userId;
     users[userId].id = req.session.user_id;
-
     res.redirect('/urls');
    }
-
-
-
 });
 function isExistingUser(email){
   let userFound = false ;
@@ -174,14 +146,12 @@ function isExistingUser(email){
   });
   return userFound;
 }
-function isValidUser(email,password,res){
+function isValidUser(email,password,req){
   let userFound = false ;
   Object.keys(users).forEach(key => {
     if(users[key].email === email && bcrypt.compareSync(password, users[key].password)){
       userFound = true;
-      //res.session.user_id = key;
-        req.session.user_id = key;
-      //res.cookie("user_id",key);
+      req.session.user_id = key;
       return;
     }
   });
