@@ -6,6 +6,14 @@ Project Description
 
 This project incorporates client-server logic using modules like Express , JavaScript , Cookie Sessions and encryption packages like Bcrypt.
 
+Screenshots 
+
+!["Screenshot of URLS Page"](https://github.com/kanwalgupta/TinyApp/blob/master/docs/urls_user_logged_in.png)
+!["Screenshot of URLS created by user Page"](https://github.com/kanwalgupta/TinyApp/blob/master/docs/urls_index.png)
+!["Screenshot of Update URL Page"](https://github.com/kanwalgupta/TinyApp/blob/master/docs/update_url.png)
+!["Screenshot of Updated Page"](https://github.com/kanwalgupta/TinyApp/blob/master/docs/updated_url.png)
+
+
 
 Functional Requirements
 
@@ -19,6 +27,7 @@ redirect -> /urls
 if user is not logged in:
 redirect -> /login
 GET /urls
+
 
 if user is not logged in:
 returns a 401 response, HTML with a relevant error message and a link to /login
